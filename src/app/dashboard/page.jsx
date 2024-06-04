@@ -5,7 +5,7 @@ import Dashboard from './Dashboard';
 import UserList from './UserList';
 import Footer from './Footer';
 import { useRouter } from 'next/navigation';
-import chatEcom from '@/api/chatecom';
+import chatEcom from '../pages/api/chatEcom';
 
 export default function Home() {
     const router = useRouter();
