@@ -1,16 +1,21 @@
 "use client"
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Header from './Header';
 import Dashboard from './Dashboard';
 import UserList from './UserList';
 import Footer from './Footer';
 import { useRouter } from 'next/navigation';
-import useFetchData from '../hooks/useFetchData'; // Importar o hook
 import chatEcom from '../pages/api/chatEcom';
 
 export default function Home() {
     const router = useRouter();
-    const { loading, users, combinedUserData, totalChatSessions, totalEcomBots, totalPublicEcomBots } = useFetchData();
+    const [loading, setLoading] = useState(true);
+    const [users, setUsers] = useState([]);
+    const [workspaces, setWorkspaces] = useState([]);
+    const [memberInWorkspace, setMemberInWorkspace] = useState([]);
+    const [totalChatSessions, setTotalChatSessions] = useState(0);
+    const [totalEcomBots, setTotalEcomBots] = useState(0);
+    const [totalPublicEcomBots, setTotalPublicEcomBots] = useState(0);
 
     useEffect(() => {
         const sessionOn = sessionStorage.getItem('sessionVALUE');
@@ -18,8 +23,75 @@ export default function Home() {
 
         if (sessionOn !== correctToken) {
             router.push('/login');
+        } else {
+            Promise.all([
+                fetchUsers(),
+                fetchWorkspaces(),
+                fetchMemberInWorkspace(),
+                fetchChatSessionData(),
+                fetchTypebotData(),
+                fetchPublicTypebotData()
+            ]).then(() => setLoading(false))
+            .catch(error => {
+                console.error('Error during initial data fetching:', error);
+                setLoading(false);
+            });
         }
     }, [router]);
+
+    const fetchUsers = async () => {
+        try {
+            const response = await chatEcom.get('/User');
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
+
+    const fetchWorkspaces = async () => {
+        try {
+            const response = await chatEcom.get('/Workspace');
+            setWorkspaces(response.data);
+        } catch (error) {
+            console.error('Error fetching workspaces:', error);
+        }
+    };
+
+    const fetchMemberInWorkspace = async () => {
+        try {
+            const response = await chatEcom.get('/MemberInWorkspace');
+            setMemberInWorkspace(response.data);
+        } catch (error) {
+            console.error('Error fetching member in workspace:', error);
+        }
+    };
+
+    const fetchChatSessionData = async () => {
+        try {
+            const response = await chatEcom.get('/ChatSession');
+            setTotalChatSessions(response.data.length);
+        } catch (error) {
+            console.error('Error fetching chat session data:', error);
+        }
+    };
+
+    const fetchTypebotData = async () => {
+        try {
+            const response = await chatEcom.get('/Typebot');
+            setTotalEcomBots(response.data.length);
+        } catch (error) {
+            console.error('Error fetching typebot data:', error);
+        }
+    };
+
+    const fetchPublicTypebotData = async () => {
+        try {
+            const response = await chatEcom.get('/PublicTypebot');
+            setTotalPublicEcomBots(response.data.length);
+        } catch (error) {
+            console.error('Error fetching public typebot data:', error);
+        }
+    };
 
     const handleDeleteUser = async (userId) => {
         try {
@@ -144,6 +216,7 @@ export default function Home() {
         }
     };
 
+
     const formattedDate = (dateString) => {
         const date = new Date(dateString);
         const day = date.getDate().toString().padStart(2, '0');
@@ -154,21 +227,38 @@ export default function Home() {
         return `${day}/${month}/${year} ${hours}:${minutes}`;
     }
 
+
+    const combinedUserData = useMemo(() => {
+        const workspaceMap = {};
+        workspaces.forEach(workspace => {
+            workspaceMap[workspace.id] = workspace;
+        });
+
+        return users.map(user => ({
+            ...user,
+            id_workspace: user.id,
+            name_workspace: workspaceMap[user.id]?.name || '',
+            plan: workspaceMap[user.id]?.plan || '',
+            updatedAt: formattedDate(workspaceMap[user.id]?.updatedAt || ''),
+            isSuspended: workspaceMap[user.id]?.isSuspended || false,
+        }));
+    }, [users, workspaces]);
+
     if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-900">
-                <div className="text-white text-xl">Carregando...</div>
-            </div>
-        );
+        return <div>Loading...</div>;
     }
 
     return (
-        <div className='h-full bg-gray-900'>
+        <div className="container mx-auto">
             <Header />
-            <main className="container mx-auto p-4">
-                <Dashboard totalUser={combinedUserData} totalChatSessions={totalChatSessions} totalEcomBots={totalEcomBots} totalPublicEcomBots={totalPublicEcomBots} />
-                <UserList users={combinedUserData} onDelete={handleDeleteUser} onSuspend={handleSuspendUser} onChangePlan={handleChangePlan} onRegisterUser={handleSubmitRegisterUser} />
-            </main>
+            <Dashboard totalChatSessions={totalChatSessions} totalEcomBots={totalEcomBots} totalPublicEcomBots={totalPublicEcomBots} />
+            <UserList
+                users={combinedUserData}
+                onDeleteUser={handleDeleteUser}
+                onSubmitRegisterUser={handleSubmitRegisterUser}
+                onSuspendUser={handleSuspendUser}
+                onChangePlan={handleChangePlan}
+            />
             <Footer />
         </div>
     );

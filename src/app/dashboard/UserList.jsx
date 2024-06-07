@@ -13,29 +13,29 @@ export default function UserList({ users, onDelete, onSuspend, onChangePlan, onR
                 <h2 className="text-2xl font-bold text-white mb-4">Usuário(s) Cadastrados</h2>
                 <Modal onRegisterUser={onRegisterUser} />
             </div>
-            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" className="px-6 py-3">
                                 ID
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" className="px-6 py-3">
                                 Nome
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" className="px-6 py-3">
                                 Email
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" className="px-6 py-3">
                                 Última Atualização
                             </th>
-                            <th scope="col" class="flex justify-center px-6 py-3">
+                            <th scope="col" className="flex justify-center px-6 py-3">
                                 Plano
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" className="px-6 py-3">
                                 Status
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" className="px-6 py-3">
                                 Edit
                             </th>
                         </tr>
@@ -114,20 +114,20 @@ function UserTable({ user, onDelete, onSuspend, onChangePlan }) {
     }
 
     return (
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <th scope="row" class="px-6 py-4" >
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row" className="px-6 py-4" >
                 {user.id}
             </th>
-            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >
+            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >
                 {user.name}
             </td>
-            <td class="px-6 py-4">
+            <td className="px-6 py-4">
                 {user.email}
             </td>
-            <td class="px-6 py-4">
+            <td className="px-6 py-4">
                 {user.updatedAt}
             </td>
-            <td class="flex justify-center px-6 py-4">
+            <td className="flex justify-center px-6 py-4">
                 <select
                     value={planUser}
                     onChange={(e) => onChangeSelectPlan(user.id, e.target.value)}
@@ -139,12 +139,11 @@ function UserTable({ user, onDelete, onSuspend, onChangePlan }) {
                     <option value="UNLIMITED">UNLIMITED</option>
                 </select>
             </td>
-            <td class={`font-bold ${isSuspended ? 'text-yellow-500' : 'text-green-500'} px-6 py-4`}>
+            <td className={`font-bold ${isSuspended ? 'text-yellow-500' : 'text-green-500'} px-6 py-4`}>
                 {isSuspended ? 'SUSPENSO' : 'ATIVO'}
             </td>
-            <td class="px-6 py-4 text-right">
+            <td className="px-6 py-4 text-right">
                 <div className="flex">
-
                     <RiInformationOffFill onClick={onChangeIsSuspended} className="text-yellow-600 hover:cursor-pointer" size={22} />
                     <FaTrashCan onClick={onChangeDelete} className="text-red-600 hover:cursor-pointer ml-3" size={22} />
                 </div>
