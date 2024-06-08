@@ -10,7 +10,7 @@ import chatEcom from '../pages/api/chatEcom';
 
 export default function Home() {
     const router = useRouter();
-    const { loading, users, combinedUserData, totalChatSessions, totalEcomBots, totalPublicEcomBots } = useFetchData();
+    const { loading, setMemberInWorkspace, setWorkspaces, combinedUserData, totalChatSessions, totalEcomBots, totalPublicEcomBots, setUsers } = useFetchData();
 
     useEffect(() => {
         const sessionOn = sessionStorage.getItem('sessionVALUE');
@@ -35,8 +35,9 @@ export default function Home() {
             const responseMemberInWorkspace = await chatEcom.delete(urlMemberInWorkspace);
             console.log('MemberInWorkspace deleted successfully:', responseMemberInWorkspace.data);
 
-            const restartUsers = users.filter(user => user.id !== userId)
-            setUsers(restartUsers)
+            setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+            setWorkspaces(prevWorkspaces => prevWorkspaces.filter(workspace => workspace.id !== userId));
+            setMemberInWorkspace(prevMembers => prevMembers.filter(member => member.userId !== userId))
         } catch (error) {
             console.error('Error updating plan:', error);
         }
@@ -45,7 +46,6 @@ export default function Home() {
     const handleSubmitRegisterUser = async (email, name, plan, onClose) => {
         try {
             const urlUser = `/User`;
-
             const dataUser = {
                 id: email,
                 name: name,
@@ -54,9 +54,8 @@ export default function Home() {
             };
 
             const responseUser = await chatEcom.post(urlUser, dataUser);
-            console.log('User Create successfully:', responseUser.data)
-            const urlWorkspace = `/Workspace`;
 
+            const urlWorkspace = `/Workspace`;
             const dataWorkspace = {
                 id: email,
                 name: "My Workspace",
@@ -78,40 +77,29 @@ export default function Home() {
                 isVerified: null
             };
 
-            const responseWorkspace = await chatEcom.post(urlWorkspace, dataWorkspace)
-            console.log('Workspace Create successfully:', responseWorkspace.data)
-            const urlMemberInWorkspace = `/MemberInWorkspace`;
+            const responseWorkspace = await chatEcom.post(urlWorkspace, dataWorkspace);
 
+
+            const urlMemberInWorkspace = `/MemberInWorkspace`;
             const dataMemberInWorkspace = {
                 userId: email,
                 workspaceId: email,
                 role: "ADMIN"
             };
 
-            const responseMemberInWorkspace = await chatEcom.post(urlMemberInWorkspace, dataMemberInWorkspace)
-            console.log('MemberInWorkspace Create successfully:', responseMemberInWorkspace.data)
+            const responseMemberInWorkspace = await chatEcom.post(urlMemberInWorkspace, dataMemberInWorkspace);
 
-            const newUser = {
-                id: dataUser.id,
-                name: dataUser.name,
-                email: dataUser.email,
-                id_workspace: dataWorkspace.id,
-                name_workspace: dataWorkspace.name,
-                plan: dataWorkspace.plan,
-                updatedAt: formattedDate(new Date()),
-                isSuspended: dataWorkspace.isSuspended
-            }
+            setUsers(prevUsers => [...prevUsers, dataUser]);
+            setWorkspaces(prevWorkspaces => [...prevWorkspaces, dataWorkspace]);
+            setMemberInWorkspace(prevMembers => [...prevMembers, dataMemberInWorkspace]);
 
-            setUsers(prevUsers => [...prevUsers, newUser])
-
-            onClose(false)
+            onClose(false);
         } catch (error) {
-            console.error('Error Create:', error);
+            console.error('Error creating user:', error);
         }
     }
 
     const handleSuspendUser = async (userId, isSuspend) => {
-        console.log(isSuspend)
         try {
             const url = `/Workspace?id=eq.${encodeURIComponent(userId)}`;
 
@@ -122,6 +110,27 @@ export default function Home() {
             const response = await chatEcom.patch(url, data);
 
             console.log('isSuspended updated successfully:', response.data);
+
+            // Atualize o estado do workspace
+            setWorkspaces(prevWorkspaces =>
+                prevWorkspaces.map(workspace =>
+                    workspace.id === userId ? { ...workspace, isSuspended: !isSuspend } : workspace
+                )
+            );
+
+            // Atualize o estado combinado do usuário
+            setUsers(prevUsers => {
+                const updatedUsers = prevUsers.map(user => {
+                    if (user.id === userId) {
+                        return {
+                            ...user,
+                            isSuspended: !isSuspend
+                        };
+                    }
+                    return user;
+                });
+                return updatedUsers;
+            });
         } catch (error) {
             console.error('Error updating isSuspended:', error);
         }

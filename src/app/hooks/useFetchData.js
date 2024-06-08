@@ -81,7 +81,7 @@ const useFetchData = () => {
         return playground;
     }, [workspaces, memberInWorkspace]);
 
-    return { loading, combinedUserData, users, workspaces, memberInWorkspace, totalChatSessions, totalEcomBots, totalPublicEcomBots };
+    return { loading, setUsers, setWorkspaces, setMemberInWorkspace, combinedUserData, users, workspaces, memberInWorkspace, totalChatSessions, totalEcomBots, totalPublicEcomBots };
 };
 
 export default useFetchData;
