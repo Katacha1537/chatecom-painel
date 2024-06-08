@@ -27,7 +27,7 @@ export default function Modal({ onRegisterUser }) {
                     >
                         <div className="relative w-auto my-6 mx-auto max-w-3xl">
                             {/*content*/}
-                            <div className="relative flex flex-col w-full border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                            <div className="relative flex flex-col w-full border border-gray-200 rounded-lg shadow sm:p-8 bg-gray-800 border-gray-700">
                                 {/*header*/}
                                 <div className="flex justify-center p-5 rounded-t">
                                     <h3 className="text-3xl font-semibold text-white">

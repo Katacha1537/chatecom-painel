@@ -14,8 +14,8 @@ export default function UserList({ users, onDelete, onSuspend, onChangePlan, onR
                 <Modal onRegisterUser={onRegisterUser} />
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 bg-gray-700 text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3">
                                 ID
@@ -53,7 +53,7 @@ export default function UserList({ users, onDelete, onSuspend, onChangePlan, onR
 
 function UserCard({ user, onDelete, onSuspend, onChangePlan }) {
     return (
-        <div className="flex w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <div className="flex w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 bg-gray-800 border-gray-700">
             <div className="space-y-2 text-white w-full">
                 <div className="flex justify-between">
                     <div>
@@ -77,7 +77,7 @@ function UserCard({ user, onDelete, onSuspend, onChangePlan }) {
                     onChangePlan(user.id, e.target.selectedPlan.value);
                 }} className="mt-2">
                     <select name="selectedPlan"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                     >
                         <option value="" disabled>Escolha o novo Plano</option>
                         <option value="STARTER">Starter</option>
@@ -85,7 +85,7 @@ function UserCard({ user, onDelete, onSuspend, onChangePlan }) {
                         <option value="UNLIMITED">Unlimited</option>
                     </select>
                     <button type="submit"
-                        class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
                     >
                         Atualizar Plano
                     </button>
@@ -114,11 +114,11 @@ function UserTable({ user, onDelete, onSuspend, onChangePlan }) {
     }
 
     return (
-        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <tr className="bg-white border-b bg-gray-800 border-gray-700 hover:bg-gray-50 hover:bg-gray-600">
             <th scope="row" className="px-6 py-4" >
                 {user.id}
             </th>
-            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" >
+            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-white" >
                 {user.name}
             </td>
             <td className="px-6 py-4">
